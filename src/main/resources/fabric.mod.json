@@ -11,7 +11,7 @@
     "homepage": "https://fabricmc.net/",
     "sources": ""
   },
-  "license": "CC0-1.0",
+  "license": "MIT-License",
   "icon": "assets/gitcraft/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -29,6 +29,7 @@
     "fabricloader": ">=0.19.2",
     "minecraft": "~26.1.2",
     "java": ">=25",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "malilib": "*"
   }
 }
