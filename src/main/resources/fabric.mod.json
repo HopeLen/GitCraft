@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "gitcraft",
+  "version": "${version}",
+  "name": "GitCraft",
+  "description": "This is a git-like version control mod for minecraft.",
+  "authors": [
+    "HopeLen"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": ""
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/gitcraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.hopelen.gitcraft.GitCraft"
+    ],
+    "fabric-datagen": [
+      "net.hopelen.gitcraft.GitCraftDataGenerator"
+    ]
+  },
+  "mixins": [
+    "gitcraft.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "minecraft": "~26.1.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
