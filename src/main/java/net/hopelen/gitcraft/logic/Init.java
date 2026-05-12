@@ -3,11 +3,8 @@ package net.hopelen.gitcraft.logic;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,26 +40,12 @@ public class Init {
             Files.createDirectories(repoRoot.resolve("commits"));
 
             // get world info from the client
-            Minecraft client = Minecraft.getInstance();
-            String worldId;
-            String worldName;
-            String dimension = client.level.dimension().identifier().toString();
-
-            if (client.hasSingleplayerServer()) {
-                worldId = client.getSingleplayerServer().getWorldPath(LevelResource.ROOT)
-                        .getParent().getFileName().toString();
-                worldName = client.getSingleplayerServer().getWorldData().getLevelName();
-            } else {
-                ServerData server = client.getCurrentServer();
-                worldId = server.ip;
-                worldName = server.name;
-            }
+            RepoJson.Placement placement = Place.createPlacement(source, min);
 
 // build and write repo.json
-            RepoJson.RepoData repoData = new RepoJson.RepoData(repoName);
-            repoData.placements.add(new RepoJson.Placement(worldName, worldId, dimension, min, max, "main"));
+            RepoJson.RepoData repoData = new RepoJson.RepoData(repoName, min, max);
+            repoData.placements.add(placement);
             RepoJson.write(repoRoot, repoData);
-
 
             source.sendFeedback(Component.literal("Initialized repo '" + repoName + "'"));
         } catch (IOException e) {

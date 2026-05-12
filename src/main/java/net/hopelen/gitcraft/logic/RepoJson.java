@@ -25,20 +25,28 @@ public class RepoJson {
         }
     }
 
+    public static class SizeData {
+        public int x, y, z;
+
+        public SizeData(BlockPos min, BlockPos max) {
+            this.x = max.getX() - min.getX();
+            this.y = max.getY() - min.getY();
+            this.z = max.getZ() - min.getZ();
+        }
+    }
+
     public static class Placement {
         public String world;
         public String worldId;
         public String dimension;
-        public BlockPosData min;
-        public BlockPosData max;
+        public BlockPosData origin;
         public String branch;
 
-        public Placement(String world, String worldId, String dimension, BlockPos min, BlockPos max, String branch) {
+        public Placement(String world, String worldId, String dimension, BlockPos origin, String branch) {
             this.world = world;
             this.worldId = worldId;
             this.dimension = dimension;
-            this.min = new BlockPosData(min);
-            this.max = new BlockPosData(max);
+            this.origin = new BlockPosData(origin);
             this.branch = branch;
         }
     }
@@ -47,12 +55,14 @@ public class RepoJson {
         public String name;
         public long created;
         public String currentBranch;
+        public SizeData size;
         public java.util.List<Placement> placements;
 
-        public RepoData(String name) {
+        public RepoData(String name, BlockPos min, BlockPos max) {
             this.name = name;
             this.created = System.currentTimeMillis();
             this.currentBranch = "main";
+            this.size = new SizeData(min, max);
             this.placements = new java.util.ArrayList<>();
         }
     }

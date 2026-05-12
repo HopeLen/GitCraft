@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.hopelen.gitcraft.GitCraft;
 import net.hopelen.gitcraft.logic.Init;
+import net.hopelen.gitcraft.logic.Place;
+import net.hopelen.gitcraft.logic.Suggestions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
@@ -30,7 +32,7 @@ public class ModCommands {
                     })
             );
 
-            // /gitcraft init <repoName>
+            // /gitcraft init <repoName> <x1,y1,z1> <x2,y2,z2>
             gitcraft.then(ClientCommands.literal("init")
                     .then(ClientCommands.argument("repoName", StringArgumentType.word())
                             .then(ClientCommands.argument("x1", IntegerArgumentType.integer())
@@ -58,6 +60,25 @@ public class ModCommands {
                                                                             })
                                                                     )))))))
             );
+
+            //gitcraft place <repoName>
+            gitcraft.then(ClientCommands.literal("place")
+                    .then(ClientCommands.argument("repoName", StringArgumentType.word())
+                            .suggests(Suggestions.REPO_NAMES)
+                            .then(ClientCommands.argument("x", IntegerArgumentType.integer())
+                                    .then(ClientCommands.argument("y", IntegerArgumentType.integer())
+                                            .then(ClientCommands.argument("z", IntegerArgumentType.integer())
+                                                    .executes(context -> {
+                                                        BlockPos origin = new BlockPos(
+                                                                IntegerArgumentType.getInteger(context, "x"),
+                                                                IntegerArgumentType.getInteger(context, "y"),
+                                                                IntegerArgumentType.getInteger(context, "z")
+                                                        );
+                                                        String repoName = StringArgumentType.getString(context, "repoName");
+                                                        Place.execute(context.getSource(), repoName, origin);
+
+                                                        return 1;
+                                                    }))))));
 
             // /gitcraft commit -m <message>
             gitcraft.then(ClientCommands.literal("commit")
