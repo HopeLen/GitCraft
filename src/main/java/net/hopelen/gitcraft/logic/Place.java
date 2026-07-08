@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.hopelen.gitcraft.render.PlacementRenderer;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
@@ -13,7 +15,7 @@ import java.nio.file.Path;
 
 public class Place {
 
-    public static void execute(FabricClientCommandSource source, String repoName, BlockPos origin) {
+    public static void execute(FabricClientCommandSource source, String repoName, BlockPos origin, Rotation rotation) {
 
         Path repoRoot = Init.getRepoPath(repoName);
 
@@ -25,17 +27,15 @@ public class Place {
         try {
             RepoJson.RepoData repoData = RepoJson.read(repoRoot);
 
-            BlockPos max = new BlockPos(
-                    origin.getX() + repoData.size.x,
-                    origin.getY() + repoData.size.y,
-                    origin.getZ() + repoData.size.z
-            );
-
             RepoJson.Placement newPlace = createPlacement(source, origin);
+            newPlace.rotation = rotation.name();
 
+            BlockPos[] bounds = Bounds.of(newPlace, repoData.size);
+            BlockPos max = bounds[1];
 
             for (RepoJson.Placement existing : repoData.placements) {
                 if (existing.worldId.equals(newPlace.worldId)
+                        && existing.dimension.equals(newPlace.dimension)
                         && existing.origin.x == origin.getX()
                         && existing.origin.y == origin.getY()
                         && existing.origin.z == origin.getZ()) {
@@ -45,11 +45,25 @@ public class Place {
             }
 
             repoData.placements.add(newPlace);
-            RepoJson.write(repoRoot, repoData);
 
-            source.sendFeedback(Component.literal(
-                    "Added placement for '" + repoName + "' at " + origin + " to " + max
-            ));
+            // a placement of a repo with commits should start as a checkout of its branch,
+            // like a fresh clone checks out the files
+            String head = Refs.readHead(repoRoot, newPlace.branch);
+            String feedback = "Added placement for '" + repoName + "' at " + bounds[0] + " to " + max
+                    + (rotation != Rotation.NONE ? " (rotated " + Rotations.degrees(rotation) + "°)" : "");
+            if (head != null) {
+                if (Checkout.pasteCommit(repoRoot, repoName, newPlace, head)) {
+                    newPlace.headCommit = head;
+                    feedback += ", checked out " + newPlace.branch + " (" + head.substring(0, 7) + ")";
+                } else {
+                    feedback += " (blocks not pasted: checkout needs singleplayer)";
+                }
+            }
+
+            RepoJson.write(repoRoot, repoData);
+            PlacementRenderer.invalidate();
+
+            source.sendFeedback(Component.literal(feedback));
         } catch (IOException e) {
             source.sendFeedback(Component.literal("Failed to read/write repo: " + e.getMessage()));
         }
@@ -57,24 +71,29 @@ public class Place {
     }
 
     public static RepoJson.Placement createPlacement(FabricClientCommandSource source, BlockPos origin) {
+        return new RepoJson.Placement(currentWorldName(), currentWorldId(), currentDimension(), origin, "main");
+    }
+
+    public static String currentDimension() {
+        return Minecraft.getInstance().level.dimension().identifier().toString();
+    }
+
+    public static String currentWorldId() {
         Minecraft client = Minecraft.getInstance();
-
-        String worldName;
-        String worldId;
-        String dimension = client.level.dimension().identifier().toString();
-
         if (client.hasSingleplayerServer()) {
-            worldId = client.getSingleplayerServer().getWorldPath(LevelResource.ROOT)
+            return client.getSingleplayerServer().getWorldPath(LevelResource.ROOT)
                     .getParent().getFileName().toString();
-            worldName = client.getSingleplayerServer().getWorldData().getLevelName();
-        } else {
-            ServerData server = client.getCurrentServer();
-            worldId = server.ip;
-            worldName = server.name;
         }
+        ServerData server = client.getCurrentServer();
+        return server.ip;
+    }
 
-        return new RepoJson.Placement(worldName, worldId, dimension, origin, "main");
-
+    public static String currentWorldName() {
+        Minecraft client = Minecraft.getInstance();
+        if (client.hasSingleplayerServer()) {
+            return client.getSingleplayerServer().getWorldData().getLevelName();
+        }
+        return client.getCurrentServer().name;
     }
 
 

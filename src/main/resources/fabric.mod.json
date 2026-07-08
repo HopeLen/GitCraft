@@ -30,6 +30,7 @@
     "minecraft": "~26.1.2",
     "java": ">=25",
     "fabric-api": "*",
-    "malilib": "*"
+    "malilib": "*",
+    "litematica": "*"
   }
 }
