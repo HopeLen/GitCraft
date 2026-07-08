@@ -1,15 +1,27 @@
 package net.hopelen.gitcraft.command;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.hopelen.gitcraft.GitCraft;
+import net.hopelen.gitcraft.logic.Commit;
 import net.hopelen.gitcraft.logic.Init;
 import net.hopelen.gitcraft.logic.Place;
 import net.hopelen.gitcraft.logic.Suggestions;
+import net.hopelen.gitcraft.logic.Unplace;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.PermissionSet;
+import net.minecraft.world.level.block.Rotation;
 
 
 public class ModCommands {
@@ -32,53 +44,45 @@ public class ModCommands {
                     })
             );
 
-            // /gitcraft init <repoName> <x1,y1,z1> <x2,y2,z2>
+            // /gitcraft init <repoName> <pos1> <pos2>  (relative coords like ~ ~ ~ work)
             gitcraft.then(ClientCommands.literal("init")
                     .then(ClientCommands.argument("repoName", StringArgumentType.word())
-                            .then(ClientCommands.argument("x1", IntegerArgumentType.integer())
-                                    .then(ClientCommands.argument("y1", IntegerArgumentType.integer())
-                                            .then(ClientCommands.argument("z1", IntegerArgumentType.integer())
-                                                    .then(ClientCommands.argument("x2", IntegerArgumentType.integer())
-                                                            .then(ClientCommands.argument("y2", IntegerArgumentType.integer())
-                                                                    .then(ClientCommands.argument("z2", IntegerArgumentType.integer())
-                                                                            .executes(context -> {
-                                                                                String repoName = StringArgumentType.getString(context, "repoName");
+                            .then(ClientCommands.argument("pos1", BlockPosArgument.blockPos())
+                                    .then(ClientCommands.argument("pos2", BlockPosArgument.blockPos())
+                                            .executes(context -> {
+                                                String repoName = StringArgumentType.getString(context, "repoName");
+                                                Init.execute(context.getSource(), repoName,
+                                                        resolveBlockPos(context, "pos1"),
+                                                        resolveBlockPos(context, "pos2"));
+                                                return 1;
+                                            })))));
 
-                                                                                BlockPos pos1 = new BlockPos(
-                                                                                        IntegerArgumentType.getInteger(context, "x1"),
-                                                                                        IntegerArgumentType.getInteger(context, "y1"),
-                                                                                        IntegerArgumentType.getInteger(context, "z1")
-                                                                                );
-                                                                                BlockPos pos2 = new BlockPos(
-                                                                                        IntegerArgumentType.getInteger(context, "x2"),
-                                                                                        IntegerArgumentType.getInteger(context, "y2"),
-                                                                                        IntegerArgumentType.getInteger(context, "z2")
-                                                                                );
-
-                                                                                Init.execute(context.getSource(), repoName, pos1, pos2);
-                                                                                return 1;
-                                                                            })
-                                                                    )))))))
-            );
-
-            //gitcraft place <repoName>
+            // /gitcraft place <repoName> <pos> [90|180|270]
             gitcraft.then(ClientCommands.literal("place")
                     .then(ClientCommands.argument("repoName", StringArgumentType.word())
                             .suggests(Suggestions.REPO_NAMES)
-                            .then(ClientCommands.argument("x", IntegerArgumentType.integer())
-                                    .then(ClientCommands.argument("y", IntegerArgumentType.integer())
-                                            .then(ClientCommands.argument("z", IntegerArgumentType.integer())
-                                                    .executes(context -> {
-                                                        BlockPos origin = new BlockPos(
-                                                                IntegerArgumentType.getInteger(context, "x"),
-                                                                IntegerArgumentType.getInteger(context, "y"),
-                                                                IntegerArgumentType.getInteger(context, "z")
-                                                        );
-                                                        String repoName = StringArgumentType.getString(context, "repoName");
-                                                        Place.execute(context.getSource(), repoName, origin);
+                            .then(ClientCommands.argument("pos", BlockPosArgument.blockPos())
+                                    .executes(context -> runPlace(context, Rotation.NONE))
+                                    .then(ClientCommands.literal("90")
+                                            .executes(context -> runPlace(context, Rotation.CLOCKWISE_90)))
+                                    .then(ClientCommands.literal("180")
+                                            .executes(context -> runPlace(context, Rotation.CLOCKWISE_180)))
+                                    .then(ClientCommands.literal("270")
+                                            .executes(context -> runPlace(context, Rotation.COUNTERCLOCKWISE_90))))));
 
-                                                        return 1;
-                                                    }))))));
+            // /gitcraft unplace [clear] — remove the placement you are standing in;
+            // "clear" also removes the blocks in the region
+            gitcraft.then(ClientCommands.literal("unplace")
+                    .executes(context -> {
+                        Unplace.execute(context.getSource(), false);
+                        return 1;
+                    })
+                    .then(ClientCommands.literal("clear")
+                            .executes(context -> {
+                                Unplace.execute(context.getSource(), true);
+                                return 1;
+                            }))
+            );
 
             // /gitcraft commit -m <message>
             gitcraft.then(ClientCommands.literal("commit")
@@ -86,7 +90,7 @@ public class ModCommands {
                             .then(ClientCommands.argument("message", StringArgumentType.greedyString())
                                     .executes(context -> {
                                         String message = StringArgumentType.getString(context, "message");
-                                        context.getSource().sendFeedback(Component.literal("Committed: " + message));
+                                        Commit.execute(context.getSource(), message);
                                         return 1;
                                     })
                             )
@@ -155,5 +159,22 @@ public class ModCommands {
             dispatcher.register(gitcraft);
         });
         GitCraft.LOGGER.info("Command initialization ends");
+    }
+
+    private static int runPlace(CommandContext<FabricClientCommandSource> context, Rotation rotation) {
+        String repoName = StringArgumentType.getString(context, "repoName");
+        Place.execute(context.getSource(), repoName, resolveBlockPos(context, "pos"), rotation);
+        return 1;
+    }
+
+    // vanilla Coordinates (supports ~ and ^) resolve against a CommandSourceStack, which
+    // only exists server-side; build a throwaway one anchored at the client player
+    private static BlockPos resolveBlockPos(CommandContext<FabricClientCommandSource> context, String name) {
+        Coordinates coords = context.getArgument(name, Coordinates.class);
+        LocalPlayer player = Minecraft.getInstance().player;
+        CommandSourceStack anchor = new CommandSourceStack(CommandSource.NULL,
+                player.position(), player.getRotationVector(), null, PermissionSet.ALL_PERMISSIONS,
+                "gitcraft", CommonComponents.EMPTY, null, player);
+        return coords.getBlockPos(anchor);
     }
 }

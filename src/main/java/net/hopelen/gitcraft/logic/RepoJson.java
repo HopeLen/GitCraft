@@ -40,7 +40,13 @@ public class RepoJson {
         public String worldId;
         public String dimension;
         public BlockPosData origin;
+        // each placement is its own working copy: it has its own checked-out branch
+        // and remembers which commit its blocks were last synced to
         public String branch;
+        public String headCommit;
+        // cardinal direction this placement is turned towards; commits are always
+        // stored facing north, so "north" means unrotated. null (older repos) = north
+        public String facing;
 
         public Placement(String world, String worldId, String dimension, BlockPos origin, String branch) {
             this.world = world;
@@ -48,20 +54,20 @@ public class RepoJson {
             this.dimension = dimension;
             this.origin = new BlockPosData(origin);
             this.branch = branch;
+            this.headCommit = null;
+            this.facing = "north";
         }
     }
 
     public static class RepoData {
         public String name;
         public long created;
-        public String currentBranch;
         public SizeData size;
         public java.util.List<Placement> placements;
 
         public RepoData(String name, BlockPos min, BlockPos max) {
             this.name = name;
             this.created = System.currentTimeMillis();
-            this.currentBranch = "main";
             this.size = new SizeData(min, max);
             this.placements = new java.util.ArrayList<>();
         }

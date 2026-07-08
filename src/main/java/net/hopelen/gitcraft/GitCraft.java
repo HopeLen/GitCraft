@@ -1,9 +1,11 @@
 package net.hopelen.gitcraft;
 
+import fi.dy.masa.malilib.event.RenderEventHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.hopelen.gitcraft.command.ModCommands;
+import net.hopelen.gitcraft.render.PlacementRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ public class GitCraft implements ModInitializer {
         LOGGER.info("Initializing GitCraft");
 
         ModCommands.registerCommands();
+
+        RenderEventHandler.getInstance().registerWorldLastRenderer(new PlacementRenderer());
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(ClientCommands.literal("dimension").executes(context -> {
