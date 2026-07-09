@@ -28,7 +28,7 @@ public class Place {
             RepoJson.RepoData repoData = RepoJson.read(repoRoot);
 
             RepoJson.Placement newPlace = createPlacement(source, origin);
-            newPlace.rotation = rotation.name();
+            newPlace.facing = Rotations.facing(rotation);
 
             BlockPos[] bounds = Bounds.of(newPlace, repoData.size);
             BlockPos max = bounds[1];

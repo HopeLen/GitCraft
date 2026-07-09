@@ -1,0 +1,142 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1783512214.882986,
+    "ast_hash": "e51077b6a7f1f67afc748f1a32a1557d",
+    "semantic_hash": "e51077b6a7f1f67afc748f1a32a1557d"
+  },
+  "build.gradle": {
+    "mtime": 1783514814.015111,
+    "ast_hash": "1ee1d86657282beba2cd8846cb13ee20",
+    "semantic_hash": ""
+  },
+  "gradlew": {
+    "mtime": 1778657564.7719724,
+    "ast_hash": "65578da0358a01f31a6a78dfcf47e2bf",
+    "semantic_hash": "65578da0358a01f31a6a78dfcf47e2bf"
+  },
+  "settings.gradle": {
+    "mtime": 1778657564.7719724,
+    "ast_hash": "6152fe3e17cdb41850b48fd1687a7cdd",
+    "semantic_hash": "6152fe3e17cdb41850b48fd1687a7cdd"
+  },
+  "src/main/java/net/hopelen/gitcraft/GitCraft.java": {
+    "mtime": 1783515575.0443363,
+    "ast_hash": "0245937d1b9bbf865866f131f0d17436",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/GitCraftDataGenerator.java": {
+    "mtime": 1778657564.7721941,
+    "ast_hash": "2dde84836a6416b98dd4b35ae169b41d",
+    "semantic_hash": "2dde84836a6416b98dd4b35ae169b41d"
+  },
+  "src/main/java/net/hopelen/gitcraft/command/ModCommands.java": {
+    "mtime": 1783521811.1959178,
+    "ast_hash": "4373eede91f1072876c1df0807fade7f",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Init.java": {
+    "mtime": 1783516598.0715408,
+    "ast_hash": "81f4cd3b8875082e505d9b2bd4852017",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Place.java": {
+    "mtime": 1783601613.21064,
+    "ast_hash": "87a1f47105b224dbcd9e3e81ce9d231e",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/RepoJson.java": {
+    "mtime": 1783522273.1332204,
+    "ast_hash": "3bee97c74ff8c9cf863d33337b9c91a8",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Suggestions.java": {
+    "mtime": 1778657564.7723076,
+    "ast_hash": "8c39602b4c4bb9bd3f985ef076b8bf94",
+    "semantic_hash": "8c39602b4c4bb9bd3f985ef076b8bf94"
+  },
+  "src/main/java/net/hopelen/gitcraft/mixin/ExampleMixin.java": {
+    "mtime": 1778657564.7723076,
+    "ast_hash": "db75c04107ac2fb97b315b9f06d206ad",
+    "semantic_hash": "db75c04107ac2fb97b315b9f06d206ad"
+  },
+  "src/main/resources/fabric.mod.json": {
+    "mtime": 1783514119.6485431,
+    "ast_hash": "5f8150b659c072607b59041f949bee43",
+    "semantic_hash": ""
+  },
+  "src/main/resources/gitcraft.mixins.json": {
+    "mtime": 1778657564.7724578,
+    "ast_hash": "7f7a673b1414bf0509610b509b514ece",
+    "semantic_hash": "7f7a673b1414bf0509610b509b514ece"
+  },
+  "CLAUDE.md": {
+    "mtime": 1783512214.88288,
+    "ast_hash": "82efb97a359f5c7290bf2513d14686be",
+    "semantic_hash": "82efb97a359f5c7290bf2513d14686be"
+  },
+  "README.md": {
+    "mtime": 1778657564.771325,
+    "ast_hash": "b79388a21615f8c632de85b56e7b85a7",
+    "semantic_hash": "b79388a21615f8c632de85b56e7b85a7"
+  },
+  "src/main/resources/assets/gitcraft/icon.png": {
+    "mtime": 1778657564.7724578,
+    "ast_hash": "46a52f5275636cb8f22b99d18b045652",
+    "semantic_hash": "46a52f5275636cb8f22b99d18b045652"
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Commit.java": {
+    "mtime": 1783521653.8858523,
+    "ast_hash": "f71ee57e177ceed691d650910a8bf767",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Commits.java": {
+    "mtime": 1783514183.753378,
+    "ast_hash": "d24715b5e40ea43c4f2139e68ac64dca",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/ObjectStore.java": {
+    "mtime": 1783514175.2464762,
+    "ast_hash": "08038126b293cefc4fa0dae46f541654",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/PlacementLocator.java": {
+    "mtime": 1783521664.843848,
+    "ast_hash": "8146da10a8ec3ad87dd0992356b40e89",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Refs.java": {
+    "mtime": 1783514180.9294105,
+    "ast_hash": "224ba5e69ce7c5e98bd8f62729658ee1",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Snapshot.java": {
+    "mtime": 1783514190.8042967,
+    "ast_hash": "03f47fac164e8762fb66d831e6be4af7",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/render/PlacementRenderer.java": {
+    "mtime": 1783521676.369845,
+    "ast_hash": "b6d8d588252bbb36335d66bdeaef6a45",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Checkout.java": {
+    "mtime": 1783521806.9569128,
+    "ast_hash": "94187fdab40a43f305e8513e8359c98e",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Unplace.java": {
+    "mtime": 1783521684.9878435,
+    "ast_hash": "3e879f7e6e15646ff935d3183b5ae4d3",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Bounds.java": {
+    "mtime": 1783521617.9528775,
+    "ast_hash": "576ed70ee5580989e070e6ac486a07a9",
+    "semantic_hash": ""
+  },
+  "src/main/java/net/hopelen/gitcraft/logic/Rotations.java": {
+    "mtime": 1783601614.9647248,
+    "ast_hash": "564341e72504e231f41ee1082c1a9506",
+    "semantic_hash": ""
+  }
+}

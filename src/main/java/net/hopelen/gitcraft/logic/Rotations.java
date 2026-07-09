@@ -16,6 +16,15 @@ public class Rotations {
         };
     }
 
+    public static int degrees(Rotation rotation) {
+        return switch (rotation) {
+            case CLOCKWISE_90 -> 90;
+            case CLOCKWISE_180 -> 180;
+            case COUNTERCLOCKWISE_90 -> 270;
+            default -> 0;
+        };
+    }
+
     public static String facing(Rotation rotation) {
         return switch (rotation) {
             case CLOCKWISE_90 -> "east";
